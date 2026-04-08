@@ -22,6 +22,13 @@ let
     cp ${dieselLogo} $out/share/icons/hicolor/512x512/apps/diesel-plasma-lab.png
     cp ${dieselLogo} $out/share/icons/hicolor/512x512/apps/diesel-os-lab.png
   '';
+
+  pinnedZenPkgs = import
+    (builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/d215436dc2f9d64f63a2713fb8b67df85ba9f73e.tar.gz")
+    {
+      system = pkgs.stdenv.hostPlatform.system;
+      config.allowUnfree = true;
+    };
 in
 {
   imports = [
@@ -44,7 +51,7 @@ in
   boot.consoleLogLevel = 3;
   boot.initrd.verbose = false;
 
-  boot.kernelPackages = pkgs.linuxPackages_6_18;
+  boot.kernelPackages = pinnedZenPkgs.linuxPackages_zen;
 
   boot.kernelParams = [
     "quiet"
@@ -72,6 +79,11 @@ in
   networking.hostName = "diesel-os-lab";
   networking.networkmanager.enable = true;
   networking.firewall.enable = true;
+
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
 
   time.timeZone = "America/Sao_Paulo";
 
@@ -173,6 +185,15 @@ in
   programs.firefox.enable = true;
   programs.virt-manager.enable = true;
 
+  environment.systemPackages = with pkgs; [
+    kdePackages.bluedevil
+    brave
+    fluent-icon-theme
+    micro
+    git
+    mangohud
+  ];
+
   services.fstrim.enable = true;
   services.flatpak.enable = true;
   services.fprintd.enable = true;
@@ -225,11 +246,11 @@ in
 
     cp ${dieselBrandingAssets}/share/diesel-plasma-lab/avatar.png /var/lib/AccountsService/icons/hal
 
-    cat > /var/lib/AccountsService/users/hal <<EOF
+    cat > /var/lib/AccountsService/users/hal <<EOF2
 [User]
 Icon=/var/lib/AccountsService/icons/hal
 SystemAccount=false
-EOF
+EOF2
 
     chmod 644 /var/lib/AccountsService/icons/hal
     chmod 644 /var/lib/AccountsService/users/hal
@@ -258,40 +279,6 @@ EOF
       fi
     '';
   };
-
-  environment.systemPackages = with pkgs; [
-    git
-    curl
-    wget
-    vim
-    nano
-    micro
-    htop
-    pciutils
-    usbutils
-    mesa-demos
-    flatpak
-
-    kdePackages.discover
-    kdePackages.sddm-kcm
-
-    bitwarden-desktop
-    onlyoffice-desktopeditors
-
-    mangohud
-    goverlay
-    protonup-qt
-
-    fluent-icon-theme
-    dieselBrandingAssets
-
-    piper
-    fprintd
-    virt-viewer
-    lact
-  ];
-
-  hardware.enableRedistributableFirmware = true;
 
   system.stateVersion = "25.11";
 }
