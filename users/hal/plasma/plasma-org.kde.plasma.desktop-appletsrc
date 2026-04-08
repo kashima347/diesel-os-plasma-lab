@@ -60,9 +60,15 @@ plugin=org.kde.plasma.keyboardlayout
 immutability=1
 plugin=org.kde.plasma.devicenotifier
 
+[Containments][70][Applets][73][Applets][78][Configuration]
+PreloadWeight=55
+
 [Containments][70][Applets][73][Applets][79]
 immutability=1
 plugin=org.kde.plasma.notifications
+
+[Containments][70][Applets][73][Applets][79][Configuration]
+PreloadWeight=55
 
 [Containments][70][Applets][73][Applets][80]
 immutability=1
@@ -71,6 +77,9 @@ plugin=org.kde.plasma.networkmanagement
 [Containments][70][Applets][73][Applets][81]
 immutability=1
 plugin=org.kde.plasma.volume
+
+[Containments][70][Applets][73][Applets][81][Configuration]
+PreloadWeight=70
 
 [Containments][70][Applets][73][Applets][81][Configuration][General]
 migrated=true
@@ -95,17 +104,31 @@ plugin=org.kde.plasma.printmanager
 immutability=1
 plugin=org.kde.plasma.battery
 
+[Containments][70][Applets][73][Applets][92][Configuration]
+PreloadWeight=42
+
 [Containments][70][Applets][73][Applets][93]
 immutability=1
 plugin=org.kde.plasma.brightness
+
+[Containments][70][Applets][73][Applets][93][Configuration]
+PreloadWeight=42
+
+[Containments][70][Applets][73][Applets][96]
+immutability=1
+plugin=org.kde.plasma.bluetooth
+
+[Containments][70][Applets][73][Applets][97]
+immutability=1
+plugin=org.kde.plasma.mediacontroller
 
 [Containments][70][Applets][73][ConfigDialog]
 DialogHeight=630
 DialogWidth=810
 
 [Containments][70][Applets][73][General]
-extraItems=org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.kscreen,org.kde.plasma.printmanager,org.kde.plasma.manage-inputmethod,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.mediacontroller,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.keyboardindicator,org.kde.plasma.weather
-knownItems=org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.kscreen,org.kde.plasma.printmanager,org.kde.plasma.manage-inputmethod,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.mediacontroller,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.keyboardindicator,org.kde.plasma.weather
+extraItems=org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.kscreen,org.kde.plasma.printmanager,org.kde.plasma.manage-inputmethod,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.mediacontroller,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.keyboardindicator,org.kde.plasma.weather,org.kde.plasma.bluetooth
+knownItems=org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.notifications,org.kde.plasma.networkmanagement,org.kde.plasma.volume,org.kde.kscreen,org.kde.plasma.printmanager,org.kde.plasma.manage-inputmethod,org.kde.plasma.cameraindicator,org.kde.plasma.keyboardlayout,org.kde.plasma.mediacontroller,org.kde.plasma.battery,org.kde.plasma.brightness,org.kde.plasma.keyboardindicator,org.kde.plasma.weather,org.kde.plasma.bluetooth
 
 [Containments][70][Applets][86]
 immutability=1
@@ -134,8 +157,15 @@ wallpaperplugin=org.kde.image
 immutability=1
 plugin=org.kde.plasma.icontasks
 
+[Containments][87][Applets][88][Configuration][ConfigDialog]
+DialogHeight=630
+DialogWidth=810
+
 [Containments][87][Applets][88][Configuration][General]
-launchers=file:///nix/store/jajjhc009f8swmmnv639f4crn7x9vcl9-system-path/share/applications/org.kde.dolphin.desktop,applications:org.kde.konsole.desktop
+fill=false
+iconSpacing=6
+launchers=applications:com.brave.Browser.desktop,file:///nix/store/jajjhc009f8swmmnv639f4crn7x9vcl9-system-path/share/applications/org.kde.dolphin.desktop,applications:org.kde.konsole.desktop
+maxStripes=1
 
 [Containments][87][Applets][91]
 immutability=1
@@ -155,8 +185,22 @@ favoritesPortedToKAstats=true
 icon=/home/hal/Downloads/diesel_d_launcher_icon.png
 systemFavorites=suspend\\,hibernate\\,reboot\\,shutdown
 
+[Containments][87][Applets][94]
+immutability=1
+plugin=org.kde.plasma.panelspacer
+
+[Containments][87][Applets][94][Configuration][General]
+expanding=true
+
+[Containments][87][Applets][95]
+immutability=1
+plugin=org.kde.plasma.panelspacer
+
+[Containments][87][Applets][95][Configuration][General]
+expanding=true
+
 [Containments][87][General]
-AppletOrder=91;88
+AppletOrder=94;91;88;95
 
 [ScreenMapping]
 itemsOnDisabledScreens=

@@ -1,81 +1,54 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_ROOT="/mnt/vmstore/projetos/Diesel-Plasma-Lab"
 HOST_NAME="${HOSTNAME%%.*}"
-USER_NAME="${SUDO_USER:-$USER}"
+ACTUAL_USER="${SUDO_USER:-$USER}"
+USER_HOME="$(getent passwd "$ACTUAL_USER" | cut -d: -f6)"
 
 HOST_DIR="$REPO_ROOT/hosts/$HOST_NAME"
-PLASMA_DIR="$REPO_ROOT/users/$USER_NAME/plasma"
-GTK_DIR="$REPO_ROOT/users/$USER_NAME/gtk"
-THEME_DIR="$REPO_ROOT/themes/color-schemes"
-ICON_DIR="$REPO_ROOT/assets/icons"
+NIXOS_DIR="$HOST_DIR/nixos"
+PLASMA_DIR="$REPO_ROOT/users/$ACTUAL_USER/plasma"
+BLUETOOTH_DIR="$REPO_ROOT/users/$ACTUAL_USER/bluetooth"
 
-if [[ ! -d "$HOST_DIR" ]]; then
-    echo "Aviso: host '$HOST_NAME' não encontrado no repositório."
-    echo "Usando fallback: $REPO_ROOT/hosts/hal"
-    HOST_DIR="$REPO_ROOT/hosts/hal"
+mkdir -p "$USER_HOME/.config"
+
+restore_if_exists() {
+  local src="$1"
+  local dst="$2"
+  if [[ -f "$src" ]]; then
+    cp -f "$src" "$dst"
+    echo "Restaurado: $src -> $dst"
+  else
+    echo "Aviso: backup ausente: $src"
+  fi
+}
+
+restore_if_exists "$PLASMA_DIR/plasma-org.kde.plasma.desktop-appletsrc" "$USER_HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+restore_if_exists "$PLASMA_DIR/plasmashellrc" "$USER_HOME/.config/plasmashellrc"
+restore_if_exists "$PLASMA_DIR/kdeglobals" "$USER_HOME/.config/kdeglobals"
+
+restore_if_exists "$BLUETOOTH_DIR/bluedevilglobalrc" "$USER_HOME/.config/bluedevilglobalrc"
+restore_if_exists "$BLUETOOTH_DIR/bluedevil.notifyrc" "$USER_HOME/.config/bluedevil.notifyrc"
+
+if [[ -f "$NIXOS_DIR/configuration.nix" ]]; then
+  sudo cp -f "$NIXOS_DIR/configuration.nix" /etc/nixos/configuration.nix
+  echo "Restaurado: $NIXOS_DIR/configuration.nix -> /etc/nixos/configuration.nix"
 fi
 
-mkdir -p "$HOME/.config" "$HOME/.local/share/color-schemes" "$HOME/.local/share/icons/diesel-os-lab"
+if [[ -f "$NIXOS_DIR/hardware-configuration.nix" ]]; then
+  sudo cp -f "$NIXOS_DIR/hardware-configuration.nix" /etc/nixos/hardware-configuration.nix
+  echo "Restaurado: $NIXOS_DIR/hardware-configuration.nix -> /etc/nixos/hardware-configuration.nix"
+fi
 
-copy_file() {
-    local src="$1"
-    local dst_dir="$2"
-    if [[ -f "$src" ]]; then
-        cp -v "$src" "$dst_dir/"
-    else
-        echo "Aviso: arquivo ausente no repositório: $src"
-    fi
-}
-
-copy_dir() {
-    local src="$1"
-    local dst_parent="$2"
-    local name
-    name="$(basename "$src")"
-    if [[ -d "$src" ]]; then
-        rm -rf "$dst_parent/$name"
-        cp -vr "$src" "$dst_parent/"
-    else
-        echo "Aviso: diretório ausente no repositório: $src"
-    fi
-}
+if command -v plasmashell >/dev/null 2>&1; then
+  plasmashell --replace >/dev/null 2>&1 & disown || true
+fi
 
 echo
-echo "==> Restaurando configuração do NixOS em /etc/nixos"
-sudo cp -v "$HOST_DIR/configuration.nix" /etc/nixos/
-sudo cp -v "$HOST_DIR/hardware-configuration.nix" /etc/nixos/
-
+echo "Restauração concluída."
+echo "Agora rode:"
+echo "  sudo nixos-rebuild test"
+echo "  sudo nixos-rebuild switch"
 echo
-echo "==> Restaurando arquivos do Plasma"
-copy_file "$PLASMA_DIR/plasma-org.kde.plasma.desktop-appletsrc" "$HOME/.config"
-copy_file "$PLASMA_DIR/kdeglobals" "$HOME/.config"
-copy_file "$PLASMA_DIR/kwinrc" "$HOME/.config"
-copy_file "$PLASMA_DIR/plasmarc" "$HOME/.config"
-copy_file "$PLASMA_DIR/kglobalshortcutsrc" "$HOME/.config"
-copy_file "$PLASMA_DIR/kscreenlockerrc" "$HOME/.config"
-
-echo
-echo "==> Restaurando arquivos GTK"
-copy_file "$GTK_DIR/gtkrc-2.0" "$HOME/.config"
-copy_dir "$GTK_DIR/gtk-3.0" "$HOME/.config"
-copy_dir "$GTK_DIR/gtk-4.0" "$HOME/.config"
-
-echo
-echo "==> Restaurando tema e ícone"
-copy_file "$THEME_DIR/DieselOSLab.colors" "$HOME/.local/share/color-schemes"
-copy_file "$ICON_DIR/menu-launcher.png" "$HOME/.local/share/icons/diesel-os-lab"
-
-cat <<MSG
-
-Restauração concluída.
-
-Agora siga esta ordem:
-1. Revise /etc/nixos/configuration.nix
-2. Rode: sudo nixos-rebuild test
-3. Se estiver tudo certo, rode: sudo nixos-rebuild switch
-4. Rode: bash "$REPO_ROOT/scripts/apply-diesel-plasma-theme.sh"
-5. Faça logout/login no Plasma
-
-MSG
+echo "Se o painel não redesenhar sozinho, faça logout/login."

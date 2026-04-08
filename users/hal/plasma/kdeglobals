@@ -119,14 +119,13 @@ ForegroundPositive=47,163,107
 ForegroundVisited=159,180,204
 
 [General]
-ColorScheme=DieselOSLab
-ColorSchemeHash=2c3f86428c11011a7c64ee1e7f47c274d498ff10
+ColorSchemeHash=4b267528a338ca8d945a56083d1527c6bb23674a
 
 [Icons]
 Theme=Fluent-dark
 
 [KDE]
-AnimationDurationFactor=0.08838834764831843
+AnimationDurationFactor=0
 LookAndFeelPackage=org.kde.breezedark.desktop
 
 [KFileDialog Settings]
